@@ -124,10 +124,19 @@
           color:#cb181d
         }
 
+        #source2{
+            display: none;
+        }
+
         @media screen and (max-width: 450px) {
-          #chart,#legend1,#legend2{
+          #chart,#legend1,#legend2,#source{
             display: none;
           }
+
+          #source2{
+            display: inherit;
+          }
+
           .mapboxgl-popup {
             transform:none !important;
             top: 20px;
@@ -209,6 +218,8 @@
              <p id="lineInstruction">Click on the blue dots to find out more about each city's air quality between 2018 and 2020</p>
              <div id="linechart"></div>
              <div id="selectedCity"></div>
+             <p id="source2">Source: <a href="https://www.airnow.gov/international/us-embassies-and-consulates/">US Air Quality Index</a> and <a href="https://www.iqair.com/">World Air Quality</a></p>
+
          <!-- </div> -->
          <!-- end line -->
       </div>
@@ -283,10 +294,6 @@
           }
       }
 
-      var legendShow = false;
-      var consoleHeight = windowHeight*0.6;
-
-      $("#console").css("height",consoleHeight)
 
       //***********
       // SVG setup
@@ -438,12 +445,11 @@
 
           $("#toggleConsole").css("top", 230);
 
-          if(medium){
-            $("#toggleConsole").css("top", 250);
-          }
 
-          if(mobile){
-            $("#toggleConsole").css("top", 240);
+          if(mobile || xs){
+            $("#console").css("height", 370);
+            $("#console").css("width", 250);
+            $("#toggleConsole").css("top", 180);
           }
 
           var layers = map.getStyle().layers;
@@ -1089,145 +1095,63 @@
 
             //mobile
 
-            // map.on('touchstart', 'plants', function(e) {
-            //
-            //   map.getCanvas().style.cursor = 'pointer';
-            //
-            //   var latitude = e.features[0].properties.latitude;
-            //   var longitude = e.features[0].properties.longitude;
-            //   var country = e.features[0].properties.country;
-            //   var project = e.features[0].properties.project;
-            //   var mainFuel = e.features[0].properties.mainFuel;
-            //   var otherFuels = e.features[0].properties.otherFuels;
-            //   var location = e.features[0].properties.location;
-            //   var status = e.features[0].properties.status;
-            //   var capacity = e.features[0].properties.capacity;
-            //   var operationStart = e.features[0].properties.operationStart;
-            //   var owner = e.features[0].properties.owner;
-            //   var capital = e.features[0].properties.capital;
-            //   var companyHQ = e.features[0].properties.companyHQ;
-            //   var shareholders = e.features[0].properties.shareholders;
-            //   var notes = e.features[0].properties.notes;
-            //   var links = e.features[0].properties.links;
-            //
-            //
-            //   while (Math.abs(e.lngLat.lng - latitude) > 180) {
-            //       latitude += e.lngLat.lng > latitude ? 360 : -360;
-            //   }
-            //
-            //   var popupClass="color1";
-            //   var color = "#80BA5A";
-            //
-            //
-            //   if(tab1){
-            //     if(mainFuel== 'Gas natural'){
-            //       color = "#80BA5A";
-            //       popupClass="color1"
-            //     }else if(mainFuel== 'Gas propano'){
-            //       color = "#2954a0";
-            //       popupClass="color6"
-            //     }else if(mainFuel== 'Carbón'){
-            //       color = "#008695";
-            //       popupClass="color2"
-            //     }else if(mainFuel== 'Petróleo'){
-            //       color = "#CF1C90";
-            //       popupClass="color5"
-            //     }else if(mainFuel== 'Fuel oil'){
-            //       color = "#3969AC";
-            //       popupClass="color3"
-            //     }else if(mainFuel== 'Diesel'){
-            //       color = "#F2B701";
-            //       popupClass="color4"
-            //     }else if(mainFuel== 'Coque de petróleo'){
-            //       color = "#f97b72";
-            //       popupClass="color7"
-            //     }else{
-            //       color = "#7F3C8D";
-            //       popupClass="color8"
-            //     }
-            //   }else{
-            //     if(status== 'Activa'){
-            //       color = "#80BA5A";
-            //       popupClass="color1"
-            //     }else if(status== 'Cerrada'){
-            //       color = "#008695";
-            //       popupClass="color2"
-            //     }else if(status== 'Planeada'){
-            //       color = "#3969AC";
-            //       popupClass="color3"
-            //     }else if(status== 'Descartada'){
-            //       color = "#F2B701";
-            //       popupClass="color4"
-            //     }else if(status== 'En construcción'){
-            //       color = "#CF1C90";
-            //       popupClass="color5"
-            //     }else if(status== 'Paralizada'){
-            //       color = "#2954a0";
-            //       popupClass="color6"
-            //     }else{
-            //       color = "#f97b72";
-            //       popupClass="color7"
-            //     }
-            //   }
-            //
-            //   if(links == "" || links == null){
-            //     popup = new mapboxgl.Popup({
-            //             closeButton: true,
-            //             closeOnClick: true,
-            //             className: popupClass
-            //         })
-            //         .setHTML('<h3 class="popupClass"><b>' + project + '</b></h3>'
-            //         + '<h4><b>País</b>: '+country+'<br>'
-            //         + '<b>Ubicación</b>: '+location+'<br>'
-            //         + '<b>Estatus</b>: '+status+'<br>'
-            //         + '<b>Capacidad</b>: '+capacity+' MW<br>'
-            //         + '<b>Combustible principal</b>: '+mainFuel+'<br>'
-            //         + '<b>Otros combustibles</b>: '+otherFuels+'<br>'
-            //         + '<b>Inicio operaciones</b>: '+operationStart+'<br>'
-            //         + '<b>Propietario/ Operador</b>: '+owner+'<br>'
-            //         + '<b>Sede empresa</b>: '+companyHQ+'<br>'
-            //         + '<b>Capital</b>: '+capital+'<br>'
-            //         + '<b>Accionistas</b>: '+shareholders+'</h4>')
-            //         .setLngLat([longitude, latitude])
-            //         .addTo(map);
-            //
-            //   }else{
-            //     popup = new mapboxgl.Popup({
-            //             closeButton: true,
-            //             closeOnClick: true,
-            //             className: popupClass
-            //         })
-            //         .setHTML('<h3 class="popupClass"><b>' + project + '</b></h3>'
-            //         + '<h4><b>País</b>: '+country+'<br>'
-            //         + '<b>Ubicación</b>: '+location+'<br>'
-            //         + '<b>Estatus</b>: '+status+'<br>'
-            //         + '<b>Capacidad</b>: '+capacity+' MW<br>'
-            //         + '<b>Combustible principal</b>: '+mainFuel+'<br>'
-            //         + '<b>Otros combustibles</b>: '+otherFuels+'<br>'
-            //         + '<b>Inicio operaciones</b>: '+operationStart+'<br>'
-            //         + '<b>Propietario/ Operador</b>: '+owner+'<br>'
-            //         + '<b>Sede empresa</b>: '+companyHQ+'<br>'
-            //         + '<b>Capital</b>: '+capital+'<br>'
-            //         + '<b>Accionistas</b>: '+shareholders+'</h4>'
-            //         + `<div class="button ${popupClass}"><a target="_blank" href="${links}">LEER MÁS</a></div>`)
-            //         .setLngLat([longitude, latitude])
-            //         .addTo(map);
-            //   }
-            //
-            //
-            //       $(`.button.${popupClass}`).hover(function(){
-            //         $(".button a").css("color","white");
-            //         $(this).css("background-color",color);
-            //        },function(){
-            //          $(".button a").css("color",color);
-            //          $(this).css("background-color","white");
-            //        });
-            //        $(".mapboxgl-popup-tip").css("border-bottom-color",color);
-            //
-            //   $(".mapboxgl-popup-tip").css("border-bottom-color",color);
-            //
-            //
-            // });
+            map.on('touchstart', 'plants', function(e) {
+            
+              map.getCanvas().style.cursor = 'pointer';
+              selectedCity = e.features[0].properties.city;               
+              selectedData = lineDataAll.filter(d => d.city == selectedCity)
+
+              drawLine(selectedData);
+
+              var latitude = e.features[0].properties.latitude;
+              var longitude = e.features[0].properties.longitude;
+              var year = e.features[0].properties.year;
+              var month = e.features[0].properties.month;
+              var year_month = timeFormat(xScaleMapInvert(e.features[0].properties.year_month_id));
+              var value = e.features[0].properties.value;
+              var city = e.features[0].properties.city;
+              var date = e.features[0].properties.year_month;
+
+              while (Math.abs(e.lngLat.lng - latitude) > 180) {
+                  latitude += e.lngLat.lng > latitude ? 360 : -360;
+              }
+
+              var popupClass="color1";
+              var color = "#2954a0";
+
+              if(city == "Abudhabi"){
+                city = "Abu Dhabi";
+              }
+              d3.select("#selectedCity").html(city);
+
+
+
+                popup = new mapboxgl.Popup({
+                        closeButton: true,
+                        closeOnClick: true,
+                        className: popupClass
+                    })
+                    .setHTML('<h3 class="popupClass"><b>' + city + '</b></h3>'
+                    + '<h4><b>'+year_month+'</b><br>'
+                    + '<b>PM 2.5</b>: '+Math.round(value * 10) / 10+' ug/m3</h4>')
+                    .setLngLat([longitude, latitude])
+                    .addTo(map);
+
+
+
+                  $(`.button.${popupClass}`).hover(function(){
+                    $(".button a").css("color","white");
+                    $(this).css("background-color",color);
+                  },function(){
+                    $(".button a").css("color",color);
+                    $(this).css("background-color","white");
+                  });
+                  $(".mapboxgl-popup-tip").css("border-bottom-color",color);
+
+              $(".mapboxgl-popup-tip").css("border-bottom-color", color);
+            
+            
+            });
 
 
       }
