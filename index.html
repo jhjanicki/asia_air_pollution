@@ -119,6 +119,36 @@
           color:#cb181d;
           cursor: pointer;
         }
+
+        #lineInstruction{
+          color:#cb181d
+        }
+
+        @media screen and (max-width: 450px) {
+          #chart,#legend1,#legend2{
+            display: none;
+          }
+          .mapboxgl-popup {
+            transform:none !important;
+            top: 20px;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-center .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-left .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-right .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip,
+          .mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip{
+              display:none !important;
+          }
+        }
   
       </style>
    </head>
@@ -147,13 +177,13 @@
               <input type="radio" id="radio-five" name="switch-two" value="2020" />
               <label for="radio-five">2020</label>
             </div>         
-            <div class="itemWrapper">
+            <div class="itemWrapper" id="legend1">
                 <p id="legendTitle" class="legendText"> Average air quality index (ug/m3)</p>
                 <div class="item">0</div>
                 <img class="item" id="legend" src="./img/legend2.png" />
                 <div class="item">90+</div>
             </div>
-            <div class='itemWrapper'>
+            <div class='itemWrapper' id="legend2">
                   <p class='item legendText'>PM 2.5 levels</p>
                    <img id="minCircle" class='item' src="./img/legend.svg" />
                    <p id="minCircleVal" class='item'></p>
@@ -176,7 +206,7 @@
                 </div>
                 <p id="yearDisplay"class="item">Month/Year: <span id="selectedYear">January 2018</span></p>
              </div>
-             <p id="lineInstruction">Click on a circle (city) to see the trends</p>
+             <p id="lineInstruction">Click on the blue dots to find out more about each city's air quality between 2018 and 2020</p>
              <div id="linechart"></div>
              <div id="selectedCity"></div>
          <!-- </div> -->
@@ -233,7 +263,7 @@
           xs = true;
       }
 
-      if (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || viewportWidth < 600) {
+      if (/Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
           mobile = true;
       }
 
@@ -251,12 +281,6 @@
           } else { // Safari
               safari = true;
           }
-      }
-
-      if (viewportWidth < 700) {
-          $("#instruction").css("display", "none");
-      } else {
-          $("#instruction").css("display", "inherit");
       }
 
       var legendShow = false;
@@ -298,7 +322,7 @@
 
       var margin2 = {top:10, right:15, bottom:30,left:15},
              width2 = $("#linechart").parent().width(),
-             height2 = 200;
+             height2 = (mobile||xs)?180:200;
 
       var svg2 = d3.select('#linechart')
               .append("svg").attr("id","svg2")
@@ -331,8 +355,8 @@
               container: 'map', // container element id
               style: 'mapbox://styles/jhjanicki/ckr6dktrk2au017o0c9m6yr82',
               center: [78.217997,24.403233], // initial map center in [lon, lat]
-              zoom: 2,
-              minZoom: 2
+              zoom: 1,
+              minZoom: 1
           });
 
       } else {
@@ -423,8 +447,7 @@
           }
 
           var layers = map.getStyle().layers;
-          console.log(layers)
-        
+          // console.log(layers)
           addCountryLayer();
 
       });
@@ -444,7 +467,13 @@
       var yearMin = '01/2018';
       var yearMax = '12/2020';
       var minCircleSize = 0;
-      var maxCircleSize = 30;
+      var maxCircleSize = mobile?15:30;
+
+      if(mobile){
+        d3.select("#chart").style("display","none");
+        d3.select("#legend1").style("display","none");
+        d3.select("#legend2").style("display","none");
+      }
 
       var sliderMin = 1;
       var sliderMax = 36;
@@ -1038,7 +1067,7 @@
                           className: popupClass
                       })
                       .setHTML('<h3 class="popupClass"><b>' + city + '</b></h3>'
-                      + '<h4><b>Month / Year</b>: '+year_month+'<br>'
+                      + '<h4><b>'+year_month+'</b><br>'
                       + '<b>PM 2.5</b>: '+Math.round(value * 10) / 10+' ug/m3</h4>')
                       .setLngLat([longitude, latitude])
                       .addTo(map);
